@@ -1,10 +1,90 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
-// import './charDetails.css';
+import gotService from '../../services/gotService';
+import Spinner from '../spinner';
+import ErrorMessage from '../errorMessage'; 
+import './charDetails.css';
+
+const Field =({char, field, label}) => {
+
+    const Term = styled.span`
+            font-weight: bold;
+        `;
+
+    return (
+        <li>
+            <Term>{label}</Term>
+            <span>{char[field]}</span>
+        </li>
+    )
+}
+
+export {
+    Field
+}
 
 export default class CharDetails extends Component {
-    render() {
+
+    gotService = new gotService();
+
+    state = {
+        char: null,
+        loading: true,
+        error: false
+    }
+
+    componentDidMount() {
+        this.updateChar();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.charId !== prevProps.charId) {
+            this.updateChar();
+        }
+    }
+
+    onCharDetailsLoaded = (char) => {
+        this.setState({
+            char,
+            loading: false
+        })
+        // this.foo.bar = 0; // вызываем ошибку
+    }
+
+    updateChar() {
+        const {charId} = this.props;
+        if (!charId) {
+            return;
+        }
         
+        this.setState ({
+            loading: true
+        })
+
+        this.gotService.getCharacter(charId)
+            .then( this.onCharDetailsLoaded )
+            .catch( () => this.onError())
+        // this.foo.bar = 0;
+    }
+    
+    onError() {
+        this.setState ({
+            char: null,
+            error: true
+        })
+    }
+
+    render() {
+
+        if (!this.state.char && this.state.error) {
+            return <ErrorMessage/>    
+        } else if (!this.state.char) {
+            return <span className="select-error">Please, select a character</span>
+        }
+
+        const {char} = this.state;
+        const {name} = char;
+              
         const CharDetails = styled.div`
             background-color: #fff;
             padding: 25px 25px 15px 25px;
@@ -50,30 +130,41 @@ export default class CharDetails extends Component {
             }
         `;
 
-        const Term = styled.span`
-            font-weight: bold;
-        `;
+        if (this.state.loading) {
+            return (
+                <CharDetails>
+                    <Spinner/>
+                </CharDetails>
+            )
+        }
     
         return (
             <CharDetails>
-                <h4>John Snow</h4>
+                <h4>{name}</h4>
                 <ListGroupUl>
-                    <li>
+
+                    { 
+                      React.Children.map(this.props.children, (child) => {
+                         return React.cloneElement(child, {char})
+                      })  
+                    }
+
+                    {/* <li>
                         <Term>Gender</Term>
-                        <span>male</span>
+                        <span>{gender}</span>
                     </li>
                     <li>
                         <Term>Born</Term>
-                        <span>1783</span>
+                        <span>{born}</span>
                     </li>
                     <li>
                         <Term>Died</Term>
-                        <span>1820</span>
+                        <span>{died}</span>
                     </li>
                     <li>
                         <Term>Culture</Term>
-                        <span>First</span>
-                    </li>
+                        <span>{culture}</span>
+                    </li> */}
                 </ListGroupUl>
             </CharDetails>
         );

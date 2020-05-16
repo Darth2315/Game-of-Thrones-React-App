@@ -1,11 +1,75 @@
 import React, {Component} from 'react';
+import Spinner from '../spinner';
+import ErrorMessage from '../errorMessage';
 // import './itemList.css';
 import styled from 'styled-components';
 
 
 export default class ItemList extends Component {
 
+    state = {
+        itemList: null,
+        error: false
+    }
+
+    componentDidMount() {
+
+        const {getData} = this.props;
+
+        getData()
+            .then( (itemList) => {
+                this.setState({
+                    itemList,
+                    error: false
+                })
+                // this.foo.bar = 0; // вызываем ошибку
+            })
+            .catch( () => {this.onError()});
+    }
+
+    componentDidCatch() {
+        this.setState({
+            itemList: null,
+            error: true
+        })
+    }
+
+    onError = (status) => {
+        this.setState ({
+            itemList: null,
+            error: true
+        })
+    }
+    
+    renderItems(arr) {
+        return arr.map((item) => {
+            const {id} = item;
+            const label = this.props.renderItem(item);
+
+            return (
+                <li
+                    key = {id}
+                    onClick={ () => this.props.onItemSelected(id)}
+                    >
+                    {label}                
+                </li>
+            )
+        })
+    }
+
     render() {
+
+        const {itemList, error} = this.state;
+
+        if (error) {
+            return <ErrorMessage/>
+        }
+
+        if (!itemList) {
+            return <Spinner/>
+        }
+
+        const items = this.renderItems(itemList);
 
         const ListGroupItem = styled.ul`
             cursor: pointer;
@@ -35,15 +99,7 @@ export default class ItemList extends Component {
         `
         return (
             <ListGroupItem>
-                <li>
-                    John Snow
-                </li>
-                <li>
-                    Brandon Stark
-                </li>
-                <li>
-                    Geremy
-                </li>
+                {items}
             </ListGroupItem>
         );
     }
