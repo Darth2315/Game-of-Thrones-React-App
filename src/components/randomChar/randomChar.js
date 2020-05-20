@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import gotService from '../../services/gotService';
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
+import PropTypes from 'prop-types';
 
 export default class RandomChar extends Component {
 
@@ -13,10 +14,16 @@ export default class RandomChar extends Component {
         loading: true,
         error: false
     }
+    
+    // // новый синтаксис пропсов по умолчанию
+    // static defaultProps = {
+    //     interval: 7500
+    // }
 
     componentDidMount() {
         this.updateChar();
-        this.timerId = setInterval(this.updateChar, 1500);
+        // this.timerId = setInterval(this.updateChar, 7500);
+        this.timerId = setInterval(this.updateChar, this.props.interval);
     }
 
     componentWillUnmount() {
@@ -77,6 +84,28 @@ export default class RandomChar extends Component {
     }
 }
 
+// Пропсы по умолчанию
+RandomChar.defaultProps = {
+    interval: 7500
+}
+
+// Короткая запись. Проверка типа данных
+RandomChar.propTypes = {
+    interval: PropTypes.number
+}
+
+// // Функция проверки типа данных
+// RandomChar.propTypes = {
+//     interval: (props, propName, componentName) => { // props - список всех пропсов, propName - конкретный пропс, componentName - имя компонента (RandomChar)
+//         const value = props[propName];
+
+//         if (typeof value === 'number' && !isNaN(value)) {
+//                 return null
+//         }
+//         return new TypeError(`${componentName}: ${propName} must be a number`)
+//     }
+// }
+
 const View = ({char}) => {
     const {name, gender, born, died, culture} = char;
 
@@ -118,7 +147,6 @@ const Term = styled.span`
     font-weight: bold;
 `;
 
-
     return (
         <>
             <h4>Random Character: {name}</h4>
@@ -143,34 +171,3 @@ const Term = styled.span`
         </>
     )
 }
-
-// // Исходный код
-// export default class RandomChar extends Component {
-
-//     render() {
-
-//         return (
-//             <div className="random-block rounded">
-//                 <h4>Random Character: John</h4>
-//                 <ul className="list-group list-group-flush">
-//                     <li className="list-group-item d-flex justify-content-between">
-//                         <span className="term">Gender </span>
-//                         <span>male</span>
-//                     </li>
-//                     <li className="list-group-item d-flex justify-content-between">
-//                         <span className="term">Born </span>
-//                         <span>11.03.1039</span>
-//                     </li>
-//                     <li className="list-group-item d-flex justify-content-between">
-//                         <span className="term">Died </span>
-//                         <span>13.09.1089</span>
-//                     </li>
-//                     <li className="list-group-item d-flex justify-content-between">
-//                         <span className="term">Culture </span>
-//                         <span>Anarchy</span>
-//                     </li>
-//                 </ul>
-//             </div>
-//         );
-//     }
-// }

@@ -3,6 +3,7 @@ import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
 // import './itemList.css';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 
 export default class ItemList extends Component {
@@ -105,22 +106,11 @@ export default class ItemList extends Component {
     }
 }
 
-// // Исходный код, до рефакторинга
-// export default class ItemList extends Component {
+ItemList.defaultProps = {
+    onItemSelected: () => {}
+}
 
-//     render() {
-//         return (
-//             <ul className="item-list list-group">
-//                 <li className="list-group-item">
-//                     John Snow
-//                 </li>
-//                 <li className="list-group-item">
-//                     Brandon Stark
-//                 </li>
-//                 <li className="list-group-item">
-//                     Geremy
-//                 </li>
-//             </ul>
-//         );
-//     }
-// }
+ItemList.propTypes = {
+    onItemSelected: PropTypes.func
+    // getData: PropTypes.arrayOf(PropTypes.object) // В getData должен быть массив, который будет состоять из объектов
+}
