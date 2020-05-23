@@ -6,7 +6,7 @@ import ErrorMessage from '../errorMessage';
 import {BooksPage, HousesPage, CharacterPage, BooksItem} from '../pages';
 import gotService from '../../services/gotService';
 import './app.css';
-import {BrowserRouter as Router, Route, useLocation} from 'react-router-dom';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 
 
 export default class App extends Component {
@@ -31,12 +31,6 @@ export default class App extends Component {
             }
         })
     }
-
-    // headerView = () => {
-    //     let location = useLocation();
-    //     console.log(location.pathname);
-    //     return <span>Path : {location.pathname}</span>
-    // }
 
     render () {
         
